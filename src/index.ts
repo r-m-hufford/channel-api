@@ -1,7 +1,9 @@
 import express, {Request, Response } from 'express';
 import { Sequelize } from 'sequelize';
 import cors from 'cors';
-const sequelize = new Sequelize('postgresql://ryanmhufford@localhost:6543/channel');
+const sequelize = new Sequelize('postgresql://ryanmhufford@localhost:6543/channel', {
+  logging: console.log
+});
 try {
   sequelize.authenticate();
   console.info('connected to the database')
