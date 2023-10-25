@@ -1,20 +1,28 @@
 import express, {Request, Response } from 'express';
 import { Sequelize } from 'sequelize';
 import cors from 'cors';
-const sequelize = new Sequelize('postgresql://ryanmhufford@localhost:6543/channel', {
-  logging: console.log
+import { sequelize } from '../config/db';
+
+//initialize database
+sequelize.authenticate()
+.then(() => {
+  console.log('connected to db');
+})
+.catch((err) => {
+  console.error(err);
 });
-try {
-  sequelize.authenticate();
-  console.info('connected to the database')
-} catch(error) {
-  console.error('Unable to connect to database', error);
-}
+
+//import user model and pass in sequelize instance
+import { initUser } from './models/user';
+import { routes } from './routes';
+initUser(sequelize);
+
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+routes(app);
 
 
 app.get('/api', (req: Request, res: Response) => {
