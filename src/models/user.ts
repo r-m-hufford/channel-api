@@ -1,4 +1,5 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
+import bcrypt from 'bcrypt';
 
 // Define the User model class
 class User extends Model {
@@ -6,6 +7,11 @@ class User extends Model {
   public name!: string;
   public email!: string;
   public password!: string;
+
+  validPassword(password: string) {
+    // return bcrypt.compareSync(password, this.password);
+    return password === this.password;
+  }
 }
 
 // Define the User model schema
