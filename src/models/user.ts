@@ -7,6 +7,8 @@ class User extends Model {
   public name!: string;
   public email!: string;
   public password!: string;
+  public googleId!: string;
+  public githubId!: string;
 
   validPassword(password: string) {
     // return bcrypt.compareSync(password, this.password);
@@ -20,6 +22,18 @@ const UserAttributes = {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
+  },
+  googleId: {
+    type: DataTypes.STRING,
+    field: 'google_id',
+    allowNull: true,
+    unique: true
+  },
+  githubId: {
+    type: DataTypes.STRING,
+    field: 'github_id',
+    allowNull: true,
+    unique: true
   },
   name: {
     type: DataTypes.STRING,
@@ -35,7 +49,7 @@ const UserAttributes = {
   },
   password: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   createdAt: {
     type: DataTypes.DATE,
