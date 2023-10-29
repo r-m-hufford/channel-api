@@ -36,6 +36,27 @@ userRouter.post('/', async (req, res) => {
   }
 });
 
+userRouter.put('/:id', async (req, res) => {
+  try {
+    const { id } = req.params
+    const updateFields = req.body;
+
+    const user = await User.update(
+      updateFields,
+      {
+      where: { id: req.params.id }
+    });
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json(user);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+
 userRouter.delete('/:id', async (req, res) => {
   try {
     const user = await User.destroy({
