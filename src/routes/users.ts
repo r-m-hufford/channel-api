@@ -5,10 +5,17 @@ export const userRouter = express.Router();
 
 userRouter.get('/', async (req, res) => {
   try {
-    const users = await User.findAll();
+    const users = await User.findAll({
+      attributes: ['id', 'name', 'email', 'createdAt', 'updatedAt'],
+      order: [
+        ['createdAt', 'DESC']
+      ],
+      where: req.query
+    });
     res.json(users);
   } catch (error) {
     console.error(error);
+    res.status(500).json({ message: 'Server Error' });
   }
 });
 
@@ -46,7 +53,7 @@ userRouter.put('/:id', async (req, res) => {
       {
       where: { id: req.params.id }
     });
-    
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -54,8 +61,7 @@ userRouter.put('/:id', async (req, res) => {
   } catch (error) {
     console.error(error);
   }
-}
-
+});
 
 userRouter.delete('/:id', async (req, res) => {
   try {
