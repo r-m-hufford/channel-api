@@ -1,6 +1,9 @@
 import express, {Request, Response } from 'express';
 import { sequelize } from '../../config/db';
 import { User } from '../models/user';
+import { confirmNewPassword, hashPassword, validatePassword } from '../utils/password';
+import { CustomError } from '../middleware/customError';
+
 export const userRouter = express.Router();
 
 userRouter.get('/', async (req, res) => {
@@ -22,6 +25,7 @@ userRouter.get('/', async (req, res) => {
 userRouter.get('/:id', async (req, res) => {
   try {
     const users = await User.findOne({
+      attributes: ['id', 'name', 'email', 'createdAt', 'updatedAt'],
       where: { id: req.params.id }
     });
     res.json(users);
@@ -30,14 +34,25 @@ userRouter.get('/:id', async (req, res) => {
   }
 });
 
-userRouter.post('/', async (req, res) => {
+userRouter.post('/signup', async (req, res) => {
   try {
+    if (!confirmNewPassword(req.body)) throw new CustomError(400, ['passwords do not match']);
+
+    req.body.password = await hashPassword(req.body.password);   
+
     const user = await User.create({
       name: req.body.name,
       email: req.body.email,
       password: req.body.password
     });
-    res.json(user);
+
+    const userData = {
+      id: user.id,
+      name: user.name,
+      email: user.email
+    };
+    
+    res.json(userData);
   } catch (error) {
     console.error(error);
   }

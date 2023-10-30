@@ -7,6 +7,7 @@ import { sequelize } from '../../config/db';
 import { User } from '../models/user';
 import jwt from 'jsonwebtoken'
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import { validatePassword } from '../utils/password';
 
 export const authRouter = express.Router();
 
@@ -16,14 +17,12 @@ passport.use(new LocalStrategy.Strategy({
 }, function(email, password, done) {
   User.findOne({ where: { email: email }})
   .then(function(user) {
-    console.log('User found:', user);
     if (!user) {
-      return done(null, false, { message: 'Incorrect email.' });
+      return done(null, false, { message: 'Incorrect password or email.' });
     }
-    const isPasswordValid = user.validPassword(password);
-    console.log('Is password valid:', isPasswordValid);
+    const isPasswordValid = validatePassword(password, user);
     if (!isPasswordValid) {
-      return done(null, false, { message: 'Incorrect password.' });
+      return done(null, false, { message: 'Incorrect password or email.' });
     }
     return done(null, user);
   })
@@ -76,9 +75,6 @@ passport.use(new GoogleStrategy({
         email: email
       });
 
-        const dumby = await User.findOne({ where: { email: email }});
-        console.log(dumby);
-
         return done(null, newUser);
     } else {
         if (user.googleId !== profile.id) {
@@ -103,7 +99,6 @@ authRouter.get('/google/callback', passport.authenticate('google', {
   failureRedirect: '/', 
   successRedirect: '/users', 
   session: false }), (req, res) => {
-  console.log('this is the callback route');
   const user = req.user as User
   const token = jwt.sign({ id: user?.id }, 'your_jwt_secret');
   res.json({user: req.user, token: token});
