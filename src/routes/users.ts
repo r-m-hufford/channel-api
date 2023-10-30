@@ -2,7 +2,7 @@ import express, {Request, Response } from 'express';
 import { sequelize } from '../../config/db';
 import { User } from '../models/user';
 import { confirmNewPassword, hashPassword, validatePassword } from '../utils/password';
-import { CustomError } from '../middleware/customError';
+import { HttpError } from '../middleware/httpError';
 import { generateToken } from '../utils/jwt';
 
 export const userRouter = express.Router();
@@ -37,7 +37,7 @@ userRouter.get('/:id', async (req, res) => {
 
 userRouter.post('/signup', async (req, res) => {
   try {
-    if (!confirmNewPassword(req.body)) throw new CustomError(400, ['passwords do not match']);
+    if (!confirmNewPassword(req.body)) throw new HttpError(400, ['passwords do not match']);
 
     req.body.password = await hashPassword(req.body.password);   
 
