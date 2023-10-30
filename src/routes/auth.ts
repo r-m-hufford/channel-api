@@ -8,6 +8,7 @@ import { User } from '../models/user';
 import jwt from 'jsonwebtoken'
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { validatePassword } from '../utils/password';
+import { generateToken } from '../utils/jwt';
 
 export const authRouter = express.Router();
 
@@ -15,7 +16,10 @@ passport.use(new LocalStrategy.Strategy({
   usernameField: 'email',
   passwordField: 'password'
 }, function(email, password, done) {
-  User.findOne({ where: { email: email }})
+  User.findOne({ 
+    attributes: ['id', 'name', 'email', 'createdAt', 'updatedAt'],
+    where: { email: email }
+  })
   .then(function(user) {
     if (!user) {
       return done(null, false, { message: 'Incorrect password or email.' });
@@ -89,17 +93,17 @@ passport.use(new GoogleStrategy({
 
 authRouter.post('/login', passport.authenticate('local', {session: false}), (req, res) => {
   const user = req.user as User
-  const token = jwt.sign({ id: user?.id }, 'your_jwt_secret');
-  res.json({user: req.user, token: token});
+  const token = generateToken(user)
+  res.json({user: req.user, token});
 });
 
 authRouter.get('/google', passport.authenticate('google', {scope: ['profile', 'email'], session: false}), (req, res) => {})
 
 authRouter.get('/google/callback', passport.authenticate('google', { 
-  failureRedirect: '/', 
-  successRedirect: '/users', 
+  failureRedirect: '/',
+  successRedirect: '/users',
   session: false }), (req, res) => {
   const user = req.user as User
-  const token = jwt.sign({ id: user?.id }, 'your_jwt_secret');
-  res.json({user: req.user, token: token});
-})
+  const token = generateToken(user);
+  res.json({user: req.user, token});
+});

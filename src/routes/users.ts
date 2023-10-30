@@ -3,6 +3,7 @@ import { sequelize } from '../../config/db';
 import { User } from '../models/user';
 import { confirmNewPassword, hashPassword, validatePassword } from '../utils/password';
 import { CustomError } from '../middleware/customError';
+import { generateToken } from '../utils/jwt';
 
 export const userRouter = express.Router();
 
@@ -46,12 +47,15 @@ userRouter.post('/signup', async (req, res) => {
       password: req.body.password
     });
 
+    const token = generateToken(user);
+
     const userData = {
       id: user.id,
       name: user.name,
-      email: user.email
+      email: user.email,
+      token
     };
-    
+
     res.json(userData);
   } catch (error) {
     console.error(error);
