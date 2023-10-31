@@ -45,3 +45,11 @@ const RevokedTokenAttributes = {
     field: 'updated_at',
   },
 };
+
+export const initRevokedToken = (sequelize: Sequelize): void => {
+  RevokedToken.init(RevokedTokenAttributes, {
+    sequelize,
+    modelName: 'RevokedToken',
+    tableName: 'revoked_tokens',
+  });
+};

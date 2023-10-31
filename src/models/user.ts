@@ -1,7 +1,6 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
 import bcrypt from 'bcrypt';
 
-// Define the User model class
 class User extends Model {
   public id!: number;
   public name!: string;
@@ -15,7 +14,6 @@ class User extends Model {
   }
 }
 
-// Define the User model schema
 const UserAttributes = {
   id: {
     type: DataTypes.INTEGER,
@@ -62,14 +60,12 @@ const UserAttributes = {
   },
 };
 
-// Create the User model and associate it with the schema
 export const initUser = (sequelize: Sequelize): void => {
   User.init(UserAttributes, {
     sequelize,
     modelName: 'User',
-    tableName: 'users', // Optional, specify the table name if it's different from the model name
+    tableName: 'users',
   });
 };
 
-// Export the User model
 export { User };
