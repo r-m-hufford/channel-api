@@ -7,7 +7,6 @@ import { sequelize } from '../../config/db';
 import { User } from '../models/user';
 import jwt from 'jsonwebtoken'
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import { validatePassword } from '../utils/password';
 import { generateToken } from '../utils/jwt';
 
 export const authRouter = express.Router();
@@ -26,7 +25,7 @@ passport.use(new LocalStrategy.Strategy({
       return done(null, false, { message: 'Incorrect password or email.' });
     }
 
-    const isPasswordValid = await validatePassword(password, user);
+    const isPasswordValid = user.validPassword(password);
     if (!isPasswordValid) {
       return done(null, false, { message: 'Incorrect password or email.' });
     }

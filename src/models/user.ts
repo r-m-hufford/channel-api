@@ -62,6 +62,13 @@ const UserAttributes = {
 
 export const initUser = (sequelize: Sequelize): void => {
   User.init(UserAttributes, {
+    hooks: {
+      beforeCreate: (user: User) => {
+        if (user.password) {
+          user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync(10));
+        }
+      }
+    },
     sequelize,
     modelName: 'User',
     tableName: 'users',

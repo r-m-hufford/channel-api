@@ -1,21 +1,16 @@
 import express, {Request, Response } from 'express';
 import { sequelize } from '../../config/db';
 import { User } from '../models/user';
-import { confirmNewPassword, hashPassword, validatePassword } from '../utils/password';
+import { confirmNewPassword, hashPassword } from '../utils/password';
 import { HttpError } from '../middleware/httpError';
 import { generateToken } from '../utils/jwt';
+import { create, destroy, findAll, findOne, update } from '../services/user-service';
 
 export const userRouter = express.Router();
 
 userRouter.get('/', async (req, res) => {
   try {
-    const users = await User.findAll({
-      attributes: ['id', 'name', 'email', 'createdAt', 'updatedAt'],
-      order: [
-        ['createdAt', 'DESC']
-      ],
-      where: req.query
-    });
+    const users = await findAll(req.query);
     res.json(users);
   } catch (error) {
     console.error(error);
@@ -25,11 +20,8 @@ userRouter.get('/', async (req, res) => {
 
 userRouter.get('/:id', async (req, res) => {
   try {
-    const users = await User.findOne({
-      attributes: ['id', 'name', 'email', 'createdAt', 'updatedAt'],
-      where: { id: req.params.id }
-    });
-    res.json(users);
+    const user = await findOne({ id: req.params.id });
+    res.json(user);
   } catch (error) {
     console.error(error);
   }
@@ -39,13 +31,7 @@ userRouter.post('/signup', async (req, res) => {
   try {
     if (!confirmNewPassword(req.body)) throw new HttpError(400, ['passwords do not match']);
 
-    req.body.password = await hashPassword(req.body.password);   
-
-    const user = await User.create({
-      name: req.body.name,
-      email: req.body.email,
-      password: req.body.password
-    });
+    const user = await create(req.body);
 
     const token = generateToken(user);
 
@@ -67,11 +53,7 @@ userRouter.put('/:id', async (req, res) => {
     const { id } = req.params
     const updateFields = req.body;
 
-    const user = await User.update(
-      updateFields,
-      {
-      where: { id: req.params.id }
-    });
+    const user = await update(id, updateFields);
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -84,9 +66,7 @@ userRouter.put('/:id', async (req, res) => {
 
 userRouter.delete('/:id', async (req, res) => {
   try {
-    const user = await User.destroy({
-      where: { id: req.params.id }
-    });
+    const user = await destroy(req.params.id);
     res.json(user);
   } catch (error) {
     console.error(error);
