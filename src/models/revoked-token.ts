@@ -53,3 +53,5 @@ export const initRevokedToken = (sequelize: Sequelize): void => {
     tableName: 'revoked_tokens',
   });
 };
+
+export { RevokedToken }
