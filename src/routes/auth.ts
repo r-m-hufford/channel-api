@@ -15,25 +15,29 @@ export const authRouter = express.Router();
 passport.use(new LocalStrategy.Strategy({
   usernameField: 'email',
   passwordField: 'password'
-}, function(email, password, done) {
-  User.findOne({ 
-    attributes: ['id', 'name', 'email', 'createdAt', 'updatedAt'],
-    where: { email: email }
-  })
-  .then(function(user) {
+}, async function(email, password, done) {
+  try {
+    const user = await User.findOne({ 
+      attributes: ['id', 'name', 'email', 'password', 'createdAt', 'updatedAt'],
+      where: { email: email }
+    });
+
     if (!user) {
       return done(null, false, { message: 'Incorrect password or email.' });
     }
-    const isPasswordValid = validatePassword(password, user);
+
+    const isPasswordValid = await validatePassword(password, user);
     if (!isPasswordValid) {
       return done(null, false, { message: 'Incorrect password or email.' });
     }
-    return done(null, user);
-  })
-  .catch(err => {
+
+    const userObject = user.toJSON();
+    delete userObject.password;
+    return done(null, userObject);
+  } catch (err) {
     console.log('Error:', err);
     done(err);
-  });
+  }
 }));
 
 const opts = {
@@ -94,16 +98,17 @@ passport.use(new GoogleStrategy({
 authRouter.post('/login', passport.authenticate('local', {session: false}), (req, res) => {
   const user = req.user as User
   const token = generateToken(user)
-  res.json({user: req.user, token});
+  res.cookie('token', token, { httpOnly: true, secure: true });
+  res.json({user: req.user});
 });
 
 authRouter.get('/google', passport.authenticate('google', {scope: ['profile', 'email'], session: false}), (req, res) => {})
 
 authRouter.get('/google/callback', passport.authenticate('google', { 
   failureRedirect: '/',
-  successRedirect: '/users',
   session: false }), (req, res) => {
   const user = req.user as User
   const token = generateToken(user);
-  res.json({user: req.user, token});
+  res.cookie('token', token, { httpOnly: true, secure: true });
+  res.json({user: req.user});
 });
