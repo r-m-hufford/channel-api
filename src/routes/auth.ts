@@ -5,9 +5,10 @@ import LocalStrategy from 'passport-local';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import { sequelize } from '../../config/db';
 import { User } from '../models/user';
-import jwt from 'jsonwebtoken'
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { generateToken } from '../utils/jwt';
+import { findOrCreateGoogleUser } from '../services/user-service';
+import { logout } from '../services/auth-service';
 
 export const authRouter = express.Router();
 
@@ -72,17 +73,11 @@ passport.use(new GoogleStrategy({
   callbackURL
 }, async function(accessToken, refreshToken, profile, done) {
   try {
-    const email = profile._json.email;
-    const user = await User.findOne({ where: { email: email }});
+    console.log('profile', profile);
+    const user = await findOrCreateGoogleUser(profile);
 
     if (!user) {
-      const newUser = await User.create({
-        googleId: profile.id,
-        name: profile.displayName,
-        email: email
-      });
-
-        return done(null, newUser);
+      throw new Error('error retrieving or creating user');
     } else {
         if (user.googleId !== profile.id) {
           throw new Error('id mismatch error');
@@ -97,6 +92,7 @@ passport.use(new GoogleStrategy({
 authRouter.post('/login', passport.authenticate('local', {session: false}), (req, res) => {
   const user = req.user as User
   const token = generateToken(user)
+  console.log(token);
   res.cookie('token', token, { httpOnly: true, secure: true });
   res.json({user: req.user});
 });
@@ -110,4 +106,11 @@ authRouter.get('/google/callback', passport.authenticate('google', {
   const token = generateToken(user);
   res.cookie('token', token, { httpOnly: true, secure: true });
   res.json({user: req.user});
+});
+
+authRouter.post('/logout', (req, res) => {
+  console.log(req.cookies['token']);
+  logout(req, res);
+  res.clearCookie('token');
+  res.json({message: 'Logged out'});
 });

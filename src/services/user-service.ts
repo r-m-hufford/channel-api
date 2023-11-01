@@ -1,5 +1,29 @@
 import { User } from "../models/user";
 
+export const findOrCreateGoogleUser = async (profile: any) => {
+  try {
+    const user = await User.findOne({
+      attributes: ["id", "name", "email", "googleId", "createdAt", "updatedAt"],
+      where: { email: profile._json.email }
+    });
+
+    if (user) {
+      return user;
+    }
+    
+    const newUser = await User.create({
+      name: profile._json.name,
+      email: profile._json.email,
+      googleId: profile.id
+    });
+
+    return newUser;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 export const findAll = async (query: any) => {
   try {
     const users = await User.findAll({

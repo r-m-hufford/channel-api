@@ -4,8 +4,8 @@ class RevokedToken extends Model {
   public revokedTokenId!: number;
   public userId!: number;
   public token!: string;
-  public iat!: string;
-  public expiresAt!: string;
+  public iat!: number;
+  public expiresAt!: number;
   public createdAt!: Date;
   public updatedAt!: Date;
 }
@@ -26,11 +26,11 @@ const RevokedTokenAttributes = {
     allowNull: false,
   },
   iat: {
-    type: DataTypes.STRING,
+    type: DataTypes.DATE,
     allowNull: false,
   },
   expiresAt: {
-    type: DataTypes.STRING,
+    type: DataTypes.DATE,
     allowNull: false,
     field: 'expires_at',
   },

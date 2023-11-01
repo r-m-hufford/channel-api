@@ -3,6 +3,7 @@ import express, {Request, Response } from 'express';
 import { Sequelize } from 'sequelize';
 import cors from 'cors';
 import { sequelize } from '../config/db';
+import cookieParser from 'cookie-parser';
 
 //initialize database
 sequelize.authenticate()
@@ -13,15 +14,21 @@ sequelize.authenticate()
   console.error(err);
 });
 
-//import user model and pass in sequelize instance
-import { initUser } from './models/user';
 import { routes } from './routes';
+import { initUser } from './models/user';
+import { initRevokedToken } from './models/revoked-token';
+import { authMiddleware } from './middleware/auth';
+import { errorHandlerMiddleware } from './middleware/httpError';
 initUser(sequelize);
+initRevokedToken(sequelize);
 
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
+
+app.use(authMiddleware);
 
 routes(app);
 
@@ -29,7 +36,7 @@ routes(app);
 app.get('/api', (req: Request, res: Response) => {
   res.json('contact');
 })
-
+app.use(errorHandlerMiddleware);
 app.listen(3000, ()=> {
   console.info('listening on port 3000');
 });
