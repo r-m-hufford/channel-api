@@ -40,24 +40,24 @@ passport.use(new LocalStrategy.Strategy({
   }
 }));
 
-const opts = {
-  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: 'your_jwt_secret'
-};
+// const opts = {
+//   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+//   secretOrKey: 'your_jwt_secret'
+// };
 
-passport.use(new JwtStrategy(opts, function(jwt_payload, done) {
-  User.findOne({ where: { id: jwt_payload.sub }})
-    .then(user => {
-      if (user) {
-        return done(null, user);
-      } else {
-        return done(null, false);
-      }
-    })
-    .catch(err => {
-      return done(err, false);
-    });
-}));
+// passport.use(new JwtStrategy(opts, function(jwt_payload, done) {
+//   User.findOne({ where: { id: jwt_payload.sub }})
+//     .then(user => {
+//       if (user) {
+//         return done(null, user);
+//       } else {
+//         return done(null, false);
+//       }
+//     })
+//     .catch(err => {
+//       return done(err, false);
+//     });
+// }));
 
 const clientID = process.env.GOOGLE_CLIENT_ID;
 const clientSecret = process.env.GOOGLE_CLIENT_SECRET;

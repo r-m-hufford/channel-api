@@ -1,5 +1,6 @@
 import { HttpError } from "./httpError";
 import { User } from "../models/user";
+import { decodeToken } from "../utils/jwt";
 
 export const authMiddleware = async (req: any, res: any, next: any) => {
   try {
@@ -9,13 +10,15 @@ export const authMiddleware = async (req: any, res: any, next: any) => {
     }
 
     const token = req.cookies['token'];
+    const decoded = decodeToken(token.accessToken);
     console.log('this is the token: ', token);
     if (!token) {
       throw new HttpError(401, ['No token provided']);
     }
+    console.log('this is the decoded token: ', decoded);
 
     const user = await User.findOne({
-      where: { id: token.id }
+      where: { id: decoded.id }
     });
     if (!user) {
       throw new HttpError(401, ['Invalid token']);
