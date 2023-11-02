@@ -7,6 +7,7 @@ class User extends Model {
   public name!: string;
   public email!: string;
   public password!: string;
+  public refreshToken!: string;
   public googleId!: string;
   public githubId!: string;
 
@@ -47,6 +48,11 @@ const UserAttributes = {
   },
   password: {
     type: DataTypes.STRING,
+    allowNull: true,
+  },
+  refreshToken: {
+    type: DataTypes.STRING,
+    field: 'refresh_token',
     allowNull: true,
   },
   createdAt: {

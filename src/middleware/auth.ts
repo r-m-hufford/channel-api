@@ -5,18 +5,18 @@ import { decodeToken } from "../utils/jwt";
 export const authMiddleware = async (req: any, res: any, next: any) => {
   try {
     const { url, method } = req;
-    console.log('this is the url: ', url);
+    // console.log('this is the url: ', url);
     if (userIsSigningUpOrLoggingIn(url, method)) {
       return next();
     }
 
-    const token = req.cookies['token'];
-    const decoded = decodeToken(token.accessToken);
-    console.log('this is the token: ', token);
+    const token = req.cookies['accessToken'];
+    const decoded = decodeToken(token);
+    // console.log('this is the token: ', token);
     if (!token) {
       throw new HttpError(401, ['No token provided']);
     }
-    console.log('this is the decoded token: ', decoded);
+    // console.log('this is the decoded token: ', decoded);
 
     const user = await User.findOne({
       where: { id: decoded.id }

@@ -6,7 +6,7 @@ import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import { sequelize } from '../../config/db';
 import { User } from '../models/user';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import { generateToken } from '../utils/jwt';
+import { decodeToken, generateToken, verifyToken } from '../utils/jwt';
 import { findOrCreateGoogleUser } from '../services/user-service';
 import { logout } from '../services/auth-service';
 
@@ -91,9 +91,10 @@ passport.use(new GoogleStrategy({
 
 authRouter.post('/login', passport.authenticate('local', {session: false}), (req, res) => {
   const user = req.user as User
-  const token = generateToken(user)
-  console.log(token);
-  res.cookie('token', token, { httpOnly: true, secure: true });
+  const tokens = generateToken(user)
+  console.log(tokens);
+  res.cookie('accessToken', tokens.accessToken, { httpOnly: true, secure: true });
+  res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true });
   res.json({user: req.user});
 });
 
@@ -103,14 +104,46 @@ authRouter.get('/google/callback', passport.authenticate('google', {
   failureRedirect: '/',
   session: false }), (req, res) => {
   const user = req.user as User
-  const token = generateToken(user);
-  res.cookie('token', token, { httpOnly: true, secure: true });
+  const tokens = generateToken(user);
+  console.log(tokens);
+  res.cookie('accessToken', tokens.accessToken, { httpOnly: true, secure: true });
+  res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true });
   res.json({user: req.user});
 });
 
 authRouter.post('/logout', (req, res) => {
-  console.log(req.cookies['token']);
+  console.log(req.cookies['accessToken']);
   logout(req, res);
-  res.clearCookie('token');
+  res.clearCookie('accessToken');
   res.json({message: 'Logged out'});
+});
+
+authRouter.post('/refresh-token', async (req, res) => {
+  try {
+    const refreshToken = req.cookies['refreshToken'];
+    if (!verifyToken(refreshToken)) {
+      throw new Error('Invalid token');
+      // if the user gets this error they should be logged out
+    } else {
+      const decoded = decodeToken(refreshToken);
+      console.log('decoded token: ', decoded);
+      // find the user
+      const user = await User.findOne({ where: { id: decoded.id }});
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      const tokens = generateToken(user);
+
+      user.refreshToken = tokens.refreshToken;
+      await user.save();
+
+      res.cookie('accessToken', tokens.accessToken, { httpOnly: true, secure: true });
+      res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true });
+      res.json({user: req.user});
+    }
+    res.json({message: 'refresh token route'});
+  } catch (error) {
+    console.log(error);
+  }
 });

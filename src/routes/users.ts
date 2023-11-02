@@ -34,13 +34,18 @@ userRouter.post('/signup', async (req, res) => {
 
     const user = await create(req.body);
 
-    const token = generateToken(user);
+    const tokens = generateToken(user)
+    console.log(tokens);
+    res.cookie('accessToken', tokens.accessToken, { httpOnly: true, secure: true });
+    res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true });
 
+    user.refreshToken = tokens.refreshToken;
+    await user.save();
+    
     const userData = {
       id: user.id,
       name: user.name,
       email: user.email,
-      token
     };
 
     res.json(userData);
