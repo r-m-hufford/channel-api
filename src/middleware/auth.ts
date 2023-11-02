@@ -7,7 +7,7 @@ export const authMiddleware = async (req: any, res: any, next: any) => {
   try {
     const { url, method } = req;
     // console.log('this is the url: ', url);
-    if (userIsSigningUpOrLoggingIn(url, method)) {
+    if (routeDoesNotRequireToken(url, method)) {
       return next();
     }
 
@@ -39,10 +39,6 @@ export const authMiddleware = async (req: any, res: any, next: any) => {
   } catch (error) {
     next(error);
   }
-}
-
-function userIsSigningUpOrLoggingIn(url: string, method: string): boolean {
-  return method === 'POST' && (url === '/users/signup' || url === '/auth/login');
 }
 
 function routeDoesNotRequireToken(url: string, method: string): boolean {
