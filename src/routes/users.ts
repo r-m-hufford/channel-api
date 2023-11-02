@@ -28,8 +28,9 @@ userRouter.get('/:id', async (req, res) => {
 });
 
 userRouter.post('/signup', async (req, res) => {
+  const { password, confirmPassword } = req.body;
   try {
-    if (!confirmNewPassword(req.body)) throw new HttpError(400, ['passwords do not match']);
+    if (!confirmNewPassword(password, confirmPassword)) throw new HttpError(400, ['passwords do not match']);
 
     const user = await create(req.body);
 

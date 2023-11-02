@@ -1,5 +1,6 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
 import bcrypt from 'bcrypt';
+import { validatePassword } from '../utils/password';
 
 class User extends Model {
   public id!: number;
@@ -10,7 +11,7 @@ class User extends Model {
   public githubId!: string;
 
   validPassword(password: string) {
-    return bcrypt.compareSync(password, this.password);
+    return validatePassword(password, this);
   }
 }
 
@@ -65,7 +66,7 @@ export const initUser = (sequelize: Sequelize): void => {
     hooks: {
       beforeCreate: (user: User) => {
         if (user.password) {
-          user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync(10));
+          user.password = bcrypt.hashSync(`${user.password}${process.env.AUTH_PEPPER}`, bcrypt.genSaltSync(10));
         }
       }
     },

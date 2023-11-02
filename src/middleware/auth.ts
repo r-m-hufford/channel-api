@@ -5,6 +5,7 @@ import { decodeToken } from "../utils/jwt";
 export const authMiddleware = async (req: any, res: any, next: any) => {
   try {
     const { url, method } = req;
+    console.log('this is the url: ', url);
     if (userIsSigningUpOrLoggingIn(url, method)) {
       return next();
     }
