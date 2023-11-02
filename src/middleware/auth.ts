@@ -16,8 +16,11 @@ export const authMiddleware = async (req: any, res: any, next: any) => {
     if (!token) {
       throw new HttpError(401, ['No token provided']);
     }
-    // console.log('this is the decoded token: ', decoded);
 
+    // check if token is revoked
+    // check if the token is expired
+      // if expired throw 403, route to auth/refresh-token in client
+    
     const user = await User.findOne({
       where: { id: decoded.id }
     });
@@ -38,10 +41,4 @@ function userIsSigningUpOrLoggingIn(url: string, method: string): boolean {
 // async function tokenIsRevoked(token): Promise<boolean> {
 //   const revokedTokens = await getAllTokens();
 //   return checkForRevokedToken(token, revokedTokens);
-// }
-
-
-// function getReqUserCode(token: string): string {
-//   const decoded = decodeToken(token);
-//   return decoded.userCode;
 // }
