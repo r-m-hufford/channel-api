@@ -1,14 +1,12 @@
-import express from 'express';
-import { Sequelize } from 'sequelize';
+import express, { Request, Response } from 'express';
 import passport from 'passport';
 import LocalStrategy from 'passport-local';
-import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
-import { sequelize } from '../../config/db';
 import { User } from '../models/user';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { decodeToken, generateToken, verifyToken } from '../utils/jwt';
 import { findOrCreateGoogleUser } from '../services/user-service';
 import { logout } from '../services/auth-service';
+import { authLimiter } from '../limiters/limiters';
 
 export const authRouter = express.Router();
 
@@ -89,7 +87,7 @@ passport.use(new GoogleStrategy({
   }
 }))
 
-authRouter.post('/login', passport.authenticate('local', {session: false}), (req, res) => {
+authRouter.post('/login', [authLimiter, passport.authenticate('local', {session: false})], (req: Request, res: Response) => {
   const user = req.user as User
   const tokens = generateToken(user)
   console.log(tokens);

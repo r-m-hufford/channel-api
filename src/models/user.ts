@@ -12,7 +12,7 @@ class User extends Model {
   public githubId!: string;
 
   validPassword(password: string) {
-    return validatePassword(password, this);
+    return bcrypt.compareSync(`${password}${process.env.AUTH_PEPPER}`, this.password);;
   }
 }
 
