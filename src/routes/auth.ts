@@ -7,6 +7,7 @@ import { decodeToken, generateToken, verifyToken } from '../utils/jwt';
 import { findOrCreateGoogleUser } from '../services/user-service';
 import { logout } from '../services/auth-service';
 import { authLimiter } from '../limiters/limiters';
+import { Strategy as GitHubStrategy} from 'passport-github2';
 
 export const authRouter = express.Router();
 
@@ -69,6 +70,28 @@ passport.use(new GoogleStrategy({
   clientID,
   clientSecret,
   callbackURL
+}, async function(accessToken, refreshToken, profile, done) {
+  try {
+    console.log('profile', profile);
+    const user = await findOrCreateGoogleUser(profile);
+
+    if (!user) {
+      throw new Error('error retrieving or creating user');
+    } else {
+        if (user.googleId !== profile.id) {
+          throw new Error('id mismatch error');
+        }
+        return done(null, user);
+      }
+    } catch (error) {
+    done(error instanceof Error ? error : new Error(String(error)));
+  }
+}))
+
+passport.use(new GitHubStrategy({
+  clientID: process.env.GITHUB_CLIENT_ID as string,
+  clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+  callbackURL: 'http://localhost:3000/auth/github/callback'
 }, async function(accessToken, refreshToken, profile, done) {
   try {
     console.log('profile', profile);
