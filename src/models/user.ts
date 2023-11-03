@@ -11,8 +11,8 @@ class User extends Model {
   public googleId!: string;
   public githubId!: string;
 
-  validPassword(password: string) {
-    return bcrypt.compareSync(`${password}${process.env.AUTH_PEPPER}`, this.password);;
+  async validPassword(password: string) {
+    return await validatePassword(password, this);
   }
 }
 

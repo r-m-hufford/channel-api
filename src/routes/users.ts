@@ -1,6 +1,4 @@
 import express, {Request, Response } from 'express';
-import { sequelize } from '../../config/db';
-import { User } from '../models/user';
 import { confirmNewPassword, hashPassword } from '../utils/password';
 import { HttpError } from '../middleware/httpError';
 import { generateToken } from '../utils/jwt';
@@ -24,6 +22,7 @@ userRouter.get('/:id', async (req, res) => {
     res.json(user);
   } catch (error) {
     console.error(error);
+    res.status(500).json({ message: 'Server Error' });
   }
 });
 
@@ -51,6 +50,7 @@ userRouter.post('/signup', async (req, res) => {
     res.json(userData);
   } catch (error) {
     console.error(error);
+    res.status(500).json({ message: 'Server Error' });
   }
 });
 
@@ -67,6 +67,7 @@ userRouter.put('/:id', async (req, res) => {
     res.json(user);
   } catch (error) {
     console.error(error);
+    res.status(500).json({ message: 'Server Error' });
   }
 });
 
@@ -76,5 +77,6 @@ userRouter.delete('/:id', async (req, res) => {
     res.json(user);
   } catch (error) {
     console.error(error);
+    res.status(500).json({ message: 'Server Error' });
   }
 });

@@ -5,7 +5,6 @@ export const logout = async (req: any, res: any) => {
   try {
     const token = req.cookies['token'];
     const decoded = decode(token.accessToken) as DecodedToken;
-    console.log('this is the logout route: ', decoded);
 
     if (!decoded) {
       throw new Error('Invalid token');

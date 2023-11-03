@@ -24,7 +24,7 @@ passport.use(new LocalStrategy.Strategy({
       return done(null, false, { message: 'Incorrect password or email.' });
     }
 
-    const isPasswordValid = user.validPassword(password);
+    const isPasswordValid = await user.validPassword(password);
     if (!isPasswordValid) {
       return done(null, false, { message: 'Incorrect password or email.' });
     }

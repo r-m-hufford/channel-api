@@ -12,8 +12,6 @@ export const passwordRouter = express.Router();
 
 passwordRouter.post('/reset', async (req: Request, res: Response, next: any) => {
   try {
-    console.log('this is the reset route');
-    console.log('this is the req.user: ', req.user);
     if (!(req.user as RequestUser)?.email) {
       throw new HttpError(400, ['Email is required']);
     }
@@ -31,6 +29,7 @@ passwordRouter.post('/reset', async (req: Request, res: Response, next: any) => 
     await update(user.id.toString(), { password: hashedPassword });
     res.json({ message: 'Password updated successfully' });
   } catch (error) {
+    console.error(error);
     next(error);
   }
 });
