@@ -42,7 +42,7 @@ export const authMiddleware = async (req: any, res: any, next: any) => {
 }
 
 function routeDoesNotRequireToken(url: string, method: string): boolean {
-  return method === 'POST' && (url === '/users/signup' || url === '/auth/login' || url === '/auth/refresh-token');
+  return (url === '/users/signup' || url.startsWith('/auth'));
 }
 
 async function tokenIsRevoked(token: string): Promise<boolean> {

@@ -4,7 +4,7 @@ import LocalStrategy from 'passport-local';
 import { User } from '../models/user';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { decodeToken, generateToken, verifyToken } from '../utils/jwt';
-import { findOrCreateGoogleUser } from '../services/user-service';
+import { findOrCreateGithubUser, findOrCreateGoogleUser } from '../services/user-service';
 import { logout } from '../services/auth-service';
 import { authLimiter } from '../limiters/limiters';
 import { Strategy as GitHubStrategy} from 'passport-github2';
@@ -70,7 +70,7 @@ passport.use(new GoogleStrategy({
   clientID,
   clientSecret,
   callbackURL
-}, async function(accessToken, refreshToken, profile, done) {
+}, async function(accessToken: string, refreshToken: string, profile: any, done: any) {
   try {
     console.log('profile', profile);
     const user = await findOrCreateGoogleUser(profile);
@@ -92,19 +92,19 @@ passport.use(new GitHubStrategy({
   clientID: process.env.GITHUB_CLIENT_ID as string,
   clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
   callbackURL: 'http://localhost:3000/auth/github/callback'
-}, async function(accessToken, refreshToken, profile, done) {
+}, async function(accessToken: string, refreshToken: string, profile: any, done: any) {
   try {
     console.log('profile', profile);
-    const user = await findOrCreateGoogleUser(profile);
+    // const user = await findOrCreateGithubUser(profile);
 
-    if (!user) {
-      throw new Error('error retrieving or creating user');
-    } else {
-        if (user.googleId !== profile.id) {
-          throw new Error('id mismatch error');
-        }
-        return done(null, user);
-      }
+    // if (!user) {
+    //   throw new Error('error retrieving or creating user');
+    // } else {
+    //     if (user.githubId !== profile.id) {
+    //       throw new Error('id mismatch error');
+    //     }
+    //     return done(null, user);
+    //   }
     } catch (error) {
     done(error instanceof Error ? error : new Error(String(error)));
   }
@@ -130,6 +130,20 @@ authRouter.get('/google/callback', passport.authenticate('google', {
   res.cookie('accessToken', tokens.accessToken, { httpOnly: true, secure: true });
   res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true });
   res.json({user: req.user});
+});
+
+authRouter.get('/github', passport.authenticate('github', {scope: ['profile', 'email'], session: false}), (req, res) => {})
+
+authRouter.get('/github/callback', passport.authenticate('github', { 
+  failureRedirect: '/',
+  session: false }), (req, res) => {
+    console.log('github callback');
+  // const user = req.user as User
+  // const tokens = generateToken(user);
+  // console.log(tokens);
+  // res.cookie('accessToken', tokens.accessToken, { httpOnly: true, secure: true });
+  // res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true });
+  // res.json({user: req.user});
 });
 
 authRouter.post('/logout', (req, res) => {
