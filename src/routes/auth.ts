@@ -58,40 +58,48 @@ passport.use(new LocalStrategy.Strategy({
 //     });
 // }));
 
-const clientID = process.env.GOOGLE_CLIENT_ID;
-const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-const callbackURL = 'http://localhost:3000/auth/google/callback';
+// const clientID = process.env.GOOGLE_CLIENT_ID;
+// const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+// const callbackURL = 'http://localhost:3000/auth/google/callback';
+
+// if (!clientID || !clientSecret) {
+//   throw new Error('Missing Google OAuth environment variables');
+// }
+
+// passport.use(new GoogleStrategy({
+//   clientID,
+//   clientSecret,
+//   callbackURL
+// }, async function(accessToken: string, refreshToken: string, profile: any, done: any) {
+//   try {
+//     console.log('profile', profile);
+//     const user = await findOrCreateGoogleUser(profile);
+
+//     if (!user) {
+//       throw new Error('error retrieving or creating user');
+//     } else {
+//         if (user.googleId !== profile.id) {
+//           throw new Error('id mismatch error');
+//         }
+//         return done(null, user);
+//       }
+//     } catch (error) {
+//     done(error instanceof Error ? error : new Error(String(error)));
+//   }
+// }))
+
+const clientID = process.env.GITHUB_CLIENT_ID;
+const clientSecret = process.env.GITHUB_CLIENT_SECRET;
+const callbackURL = 'http://localhost:3000/auth/github/callback';
 
 if (!clientID || !clientSecret) {
-  throw new Error('Missing Google OAuth environment variables');
+  throw new Error('Missing Github OAuth environment variables');
 }
 
-passport.use(new GoogleStrategy({
+passport.use(new GitHubStrategy({
   clientID,
   clientSecret,
   callbackURL
-}, async function(accessToken: string, refreshToken: string, profile: any, done: any) {
-  try {
-    console.log('profile', profile);
-    const user = await findOrCreateGoogleUser(profile);
-
-    if (!user) {
-      throw new Error('error retrieving or creating user');
-    } else {
-        if (user.googleId !== profile.id) {
-          throw new Error('id mismatch error');
-        }
-        return done(null, user);
-      }
-    } catch (error) {
-    done(error instanceof Error ? error : new Error(String(error)));
-  }
-}))
-
-passport.use(new GitHubStrategy({
-  clientID: process.env.GITHUB_CLIENT_ID as string,
-  clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
-  callbackURL: 'http://localhost:3000/auth/github/callback'
 }, async function(accessToken: string, refreshToken: string, profile: any, done: any) {
   try {
     console.log('profile', profile);
@@ -105,6 +113,7 @@ passport.use(new GitHubStrategy({
     //     }
     //     return done(null, user);
     //   }
+    done(null, profile);
     } catch (error) {
     done(error instanceof Error ? error : new Error(String(error)));
   }
@@ -132,7 +141,9 @@ authRouter.get('/google/callback', passport.authenticate('google', {
   res.json({user: req.user});
 });
 
-authRouter.get('/github', passport.authenticate('github', {scope: ['profile', 'email'], session: false}), (req, res) => {})
+authRouter.get('/github', passport.authenticate('github', {scope: ['user:email'], session: false}), (req, res) => {
+  console.log('github route');
+})
 
 authRouter.get('/github/callback', passport.authenticate('github', { 
   failureRedirect: '/',
