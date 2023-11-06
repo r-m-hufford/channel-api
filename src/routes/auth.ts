@@ -141,21 +141,21 @@ authRouter.get('/google/callback', passport.authenticate('google', {
   res.json({user: req.user});
 });
 
-authRouter.get('/github', passport.authenticate('github', {scope: ['user:email'], session: false}), (req, res) => {
-  console.log('github route');
-})
+// authRouter.get('/github', passport.authenticate('github', {scope: ['user:email'], session: false}), (req, res) => {
+//   console.log('github route');
+// })
 
-authRouter.get('/github/callback', passport.authenticate('github', { 
-  failureRedirect: '/',
-  session: false }), (req, res) => {
-    console.log('github callback');
-  // const user = req.user as User
-  // const tokens = generateToken(user);
-  // console.log(tokens);
-  // res.cookie('accessToken', tokens.accessToken, { httpOnly: true, secure: true });
-  // res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true });
-  // res.json({user: req.user});
-});
+// authRouter.get('/github/callback', passport.authenticate('github', { 
+//   failureRedirect: '/',
+//   session: false }), (req, res) => {
+//     console.log('github callback');
+//   const user = req.user as User
+//   const tokens = generateToken(user);
+//   console.log(tokens);
+//   res.cookie('accessToken', tokens.accessToken, { httpOnly: true, secure: true });
+//   res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true });
+//   res.json({user: req.user});
+// });
 
 authRouter.post('/logout', (req, res) => {
   console.log(req.cookies['accessToken']);
