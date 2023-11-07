@@ -1,4 +1,5 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
+import { User } from "./user";
 class Article extends Model {
   public id!: number;
   public title!: string;
@@ -52,6 +53,13 @@ export const initArticle = (sequelize: Sequelize) => {
   Article.init(ArticleAttributes, {
     sequelize,
     tableName: 'articles',
+  });
+};
+
+export const associateArticle = () => {
+  Article.belongsTo(User, {
+    foreignKey: 'authorId',
+    as: 'author',
   });
 };
 

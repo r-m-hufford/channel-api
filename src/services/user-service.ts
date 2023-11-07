@@ -1,3 +1,4 @@
+import { Article } from "../models/article";
 import { Profile } from "../models/profile";
 import { User } from "../models/user";
 
@@ -67,7 +68,10 @@ export const findOne = async (query: any) => {
     const user = await User.findOne({
       attributes: ["id", "username", "email", "createdAt", "updatedAt"],
       where: query,
-      include: [{ model: Profile, as: 'profile', attributes: ["id", "firstName", "lastName", "bio"] }],
+      include: [
+        { model: Profile, as: 'profile', attributes: ["id", "firstName", "lastName", "bio"] },
+        { model: Article, as: 'articles', attributes: ["id", "author_id", "description", "title", "body", "createdAt", "updatedAt"]}
+      ],
     });
     return user;
   } catch (error) {
