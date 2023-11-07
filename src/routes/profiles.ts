@@ -1,11 +1,12 @@
 import express from 'express';
 import { Profile } from '../models/profile';
+import { create, destroy, findAll, findOne, update } from '../services/profile-service';
 
 export const profileRouter = express.Router();
 
 profileRouter.get('/', async (req, res) => {
   try {
-    const profiles = await Profile.findAll(req.query);
+    const profiles = await findAll(req.query);
     res.json(profiles);
   } catch (error) {
     console.error(error);
@@ -16,7 +17,7 @@ profileRouter.get('/', async (req, res) => {
 profileRouter.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const profile = await Profile.findByPk(id);
+    const profile = await findOne({ id: id });
     res.json(profile);
   } catch (error) {
     console.error(error);
@@ -26,7 +27,7 @@ profileRouter.get('/:id', async (req, res) => {
 
 profileRouter.post('/', async (req, res) => {
   try {
-    const profile = await Profile.create(req.body);
+    const profile = await create(req.body);
     res.json(profile);
   } catch (error) {
     console.error(error);
@@ -36,29 +37,26 @@ profileRouter.post('/', async (req, res) => {
 
 profileRouter.put('/:id', async (req, res) => {
   try {
-    const { id } = req.params;
-    const profile = await Profile.findByPk(id);
-    if (profile) {
-      await profile.update(req.body);
-      res.json(profile);
-    } else {
+    const id = parseInt(req.params.id);
+    const profile = await update(id, req.body);
+
+    if (!profile) {
       res.status(404).json({ message: 'Profile not found' });
     }
+
+    res.json(profile);
   } catch (error) {
-    
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
   }
 });
 
 profileRouter.delete('/:id', async (req, res) => {
   try {
-    const { id } = req.params;
-    const profile = await Profile.findByPk(id);
-    if (profile) {
-      await profile.destroy();
-      res.status(204).end();
-    } else {
-      res.status(404).end();
-    }
+    const id = parseInt(req.params.id);
+    const profile = await destroy(id);
+
+    res.json(profile);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server Error' });
