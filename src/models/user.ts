@@ -2,6 +2,7 @@ import { Model, DataTypes, Sequelize, HasManyGetAssociationsMixin } from 'sequel
 import bcrypt from 'bcrypt';
 import { validatePassword } from '../utils/password';
 import { Article } from './article';
+import { Profile } from './profile';
 
 class User extends Model {
   public id!: number;
@@ -90,6 +91,11 @@ export const associateUser = () => {
     sourceKey: 'id',
     foreignKey: 'authorId',
     as: 'articles',
+  });
+
+  User.hasOne(Profile, {
+    foreignKey: 'userId',
+    as: 'profile',
   });
 }
 

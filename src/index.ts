@@ -20,13 +20,14 @@ import { associateUser, initUser } from './models/user';
 import { initRevokedToken } from './models/revoked-token';
 import { authMiddleware } from './middleware/auth';
 import { errorHandlerMiddleware } from './middleware/httpError';
-import { initProfile } from './models/profile';
+import { associateProfile, initProfile } from './models/profile';
 initArticle(sequelize);
 initUser(sequelize);
 initRevokedToken(sequelize);
 initProfile(sequelize);
 
 associateUser();
+associateProfile();
 
 
 const app = express();

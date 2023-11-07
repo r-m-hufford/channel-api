@@ -1,3 +1,4 @@
+import { Profile } from "../models/profile";
 import { User } from "../models/user";
 
 export const findOrCreateGithubUser = async (profile: any) => {
@@ -66,6 +67,7 @@ export const findOne = async (query: any) => {
     const user = await User.findOne({
       attributes: ["id", "username", "email", "createdAt", "updatedAt"],
       where: query,
+      include: [{ model: Profile, as: 'profile', attributes: ["id", "firstName", "lastName", "bio"] }],
     });
     return user;
   } catch (error) {

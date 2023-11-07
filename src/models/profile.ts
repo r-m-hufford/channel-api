@@ -1,4 +1,5 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
+import { User } from './user';
 
 class Profile extends Model {
   public id!: number;
@@ -64,5 +65,12 @@ export const initProfile = (sequelize: Sequelize) => {
     tableName: 'profiles',
   });
   };
+
+export const associateProfile = () => {
+  Profile.belongsTo(User, {
+    foreignKey: 'userId', 
+    as: 'user',
+  });
+}
 
 export { Profile };
