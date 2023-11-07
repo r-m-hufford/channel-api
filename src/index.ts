@@ -15,19 +15,23 @@ sequelize.authenticate()
 });
 
 import { routes } from './routes';
-import { initArticle } from './models/article';
+import { associateArticle, initArticle } from './models/article';
 import { associateUser, initUser } from './models/user';
 import { initRevokedToken } from './models/revoked-token';
 import { authMiddleware } from './middleware/auth';
 import { errorHandlerMiddleware } from './middleware/httpError';
 import { associateProfile, initProfile } from './models/profile';
+import { associateTopic, initTopic } from './models/topic';
 initArticle(sequelize);
 initUser(sequelize);
 initRevokedToken(sequelize);
 initProfile(sequelize);
+initTopic(sequelize);
 
 associateUser();
 associateProfile();
+associateArticle();
+associateTopic();
 
 
 const app = express();

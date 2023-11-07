@@ -1,13 +1,17 @@
-import { DataTypes, Model, Sequelize } from "sequelize";
+import { BelongsToManyAddAssociationsMixin, DataTypes, Model, Sequelize } from "sequelize";
 import { User } from "./user";
+import { Topic } from "./topic";
+
 class Article extends Model {
-  public id!: number;
+  public articleId!: number;
   public title!: string;
   public description!: string;
   public body!: string;
   public authorId!: number;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+  public addTopics!: BelongsToManyAddAssociationsMixin<Topic, number>;
+
 }
 
 const ArticleAttributes = {
@@ -60,6 +64,12 @@ export const associateArticle = () => {
   Article.belongsTo(User, {
     foreignKey: 'authorId',
     as: 'author',
+  });
+
+  Article.belongsToMany(Topic, {
+    through: 'articles_topics',
+    as: 'topics',
+    foreignKey: 'article_id',
   });
 };
 

@@ -3,6 +3,7 @@ import { userRouter } from './routes/users';
 import { passwordRouter } from './routes/password';
 import { profileRouter } from './routes/profiles';
 import { articlesRouter } from './routes/articles';
+import { topicsRouter } from './routes/topics';
 
 
 export function routes(app: any) {
@@ -11,4 +12,5 @@ export function routes(app: any) {
   app.use('/password', passwordRouter);
   app.use('/profiles', profileRouter);
   app.use('/articles', articlesRouter);
+  app.use('/topics', topicsRouter);
 }

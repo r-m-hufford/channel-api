@@ -1,5 +1,4 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
-import { Article } from '../models/article';
 
 class Topic extends Model {
   public id!: number;
@@ -28,21 +27,3 @@ const TopicAttributes = {
     field: 'updated_at',
   },
 };
-
-export const initTopic = (sequelize: Sequelize): void => {
-  Topic.init(TopicAttributes, {
-    sequelize,
-    modelName: 'Topic',
-    tableName: 'topics',
-  });
-}
-
-export const associateTopic = () => {
-  Topic.belongsToMany(Article, {
-    through: 'articles_topics',
-    as: 'articles',
-    foreignKey: 'topic_id',
-  });
-}
-
-export { Topic };

@@ -83,7 +83,6 @@ export const initUser = (sequelize: Sequelize): void => {
     modelName: 'User',
     tableName: 'users',
   });
-
 };
 
 export const associateUser = () => {
