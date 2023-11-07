@@ -17,7 +17,7 @@ passport.use(new LocalStrategy.Strategy({
 }, async function(email, password, done) {
   try {
     const user = await User.findOne({ 
-      attributes: ['id', 'name', 'email', 'password', 'createdAt', 'updatedAt'],
+      attributes: ['id', 'username', 'email', 'password', 'createdAt', 'updatedAt'],
       where: { email: email }
     });
 
@@ -58,66 +58,66 @@ passport.use(new LocalStrategy.Strategy({
 //     });
 // }));
 
-// const clientID = process.env.GOOGLE_CLIENT_ID;
-// const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-// const callbackURL = 'http://localhost:3000/auth/google/callback';
-
-// if (!clientID || !clientSecret) {
-//   throw new Error('Missing Google OAuth environment variables');
-// }
-
-// passport.use(new GoogleStrategy({
-//   clientID,
-//   clientSecret,
-//   callbackURL
-// }, async function(accessToken: string, refreshToken: string, profile: any, done: any) {
-//   try {
-//     console.log('profile', profile);
-//     const user = await findOrCreateGoogleUser(profile);
-
-//     if (!user) {
-//       throw new Error('error retrieving or creating user');
-//     } else {
-//         if (user.googleId !== profile.id) {
-//           throw new Error('id mismatch error');
-//         }
-//         return done(null, user);
-//       }
-//     } catch (error) {
-//     done(error instanceof Error ? error : new Error(String(error)));
-//   }
-// }))
-
-const clientID = process.env.GITHUB_CLIENT_ID;
-const clientSecret = process.env.GITHUB_CLIENT_SECRET;
-const callbackURL = 'http://localhost:3000/auth/github/callback';
+const clientID = process.env.GOOGLE_CLIENT_ID;
+const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+const callbackURL = 'http://localhost:3000/auth/google/callback';
 
 if (!clientID || !clientSecret) {
-  throw new Error('Missing Github OAuth environment variables');
+  throw new Error('Missing Google OAuth environment variables');
 }
 
-passport.use(new GitHubStrategy({
+passport.use(new GoogleStrategy({
   clientID,
   clientSecret,
   callbackURL
 }, async function(accessToken: string, refreshToken: string, profile: any, done: any) {
   try {
     console.log('profile', profile);
-    // const user = await findOrCreateGithubUser(profile);
+    const user = await findOrCreateGoogleUser(profile);
 
-    // if (!user) {
-    //   throw new Error('error retrieving or creating user');
-    // } else {
-    //     if (user.githubId !== profile.id) {
-    //       throw new Error('id mismatch error');
-    //     }
-    //     return done(null, user);
-    //   }
-    done(null, profile);
+    if (!user) {
+      throw new Error('error retrieving or creating user');
+    } else {
+        if (user.googleId !== profile.id) {
+          throw new Error('id mismatch error');
+        }
+        return done(null, user);
+      }
     } catch (error) {
     done(error instanceof Error ? error : new Error(String(error)));
   }
 }))
+
+// const clientID = process.env.GITHUB_CLIENT_ID;
+// const clientSecret = process.env.GITHUB_CLIENT_SECRET;
+// const callbackURL = 'http://localhost:3000/auth/github/callback';
+
+// if (!clientID || !clientSecret) {
+//   throw new Error('Missing Github OAuth environment variables');
+// }
+
+// passport.use(new GitHubStrategy({
+//   clientID,
+//   clientSecret,
+//   callbackURL
+// }, async function(accessToken: string, refreshToken: string, profile: any, done: any) {
+//   try {
+//     console.log('profile', profile);
+//     const user = await findOrCreateGithubUser(profile);
+
+//     if (!user) {
+//       throw new Error('error retrieving or creating user');
+//     } else {
+//         if (user.githubId !== profile.id) {
+//           throw new Error('id mismatch error');
+//         }
+//         return done(null, user);
+//       }
+//     done(null, profile);
+//     } catch (error) {
+//     done(error instanceof Error ? error : new Error(String(error)));
+//   }
+// }))
 
 authRouter.post('/login', [authLimiter, passport.authenticate('local', {session: false})], (req: Request, res: Response) => {
   const user = req.user as User
@@ -188,7 +188,6 @@ authRouter.post('/refresh-token', async (req, res) => {
       res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true });
       res.json({user: req.user});
     }
-    res.json({message: 'refresh token route'});
   } catch (error) {
     console.log(error);
   }

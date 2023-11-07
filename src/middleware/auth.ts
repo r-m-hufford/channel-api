@@ -54,5 +54,5 @@ async function tokenIsExpired(decodedExp: string): Promise<boolean> {
   const now = new Date();
   const expirationDate = new Date(decodedExp);
 
-  return now.getTime() > expirationDate.getTime();
+  return now.getTime() < expirationDate.getTime();
 }

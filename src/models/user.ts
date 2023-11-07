@@ -1,10 +1,11 @@
-import { Model, DataTypes, Sequelize } from 'sequelize';
+import { Model, DataTypes, Sequelize, HasManyGetAssociationsMixin } from 'sequelize';
 import bcrypt from 'bcrypt';
 import { validatePassword } from '../utils/password';
+import { Article } from './article';
 
 class User extends Model {
   public id!: number;
-  public name!: string;
+  public username!: string;
   public email!: string;
   public password!: string;
   public refreshToken!: string;
@@ -14,6 +15,7 @@ class User extends Model {
   async validPassword(password: string) {
     return await validatePassword(password, this);
   }
+    public getArticles!: HasManyGetAssociationsMixin<Article>;
 }
 
 const UserAttributes = {
@@ -34,7 +36,7 @@ const UserAttributes = {
     allowNull: true,
     unique: true
   },
-  name: {
+  username: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -80,6 +82,15 @@ export const initUser = (sequelize: Sequelize): void => {
     modelName: 'User',
     tableName: 'users',
   });
+
 };
+
+export const associateUser = () => {
+  User.hasMany(Article, {
+    sourceKey: 'id',
+    foreignKey: 'authorId',
+    as: 'articles',
+  });
+}
 
 export { User };

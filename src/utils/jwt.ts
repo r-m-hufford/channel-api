@@ -18,7 +18,7 @@ export function generateToken(user: Partial<User>, expiresIn: number | string = 
   )
   
   const refreshToken = sign(
-    {id: user.id, email: user.email, type: 'ACCESS'},
+    {id: user.id, email: user.email, type: 'REFRESH'},
     privateKey,
     { expiresIn: refreshIn }
   )

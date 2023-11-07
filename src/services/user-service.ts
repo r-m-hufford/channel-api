@@ -3,7 +3,7 @@ import { User } from "../models/user";
 export const findOrCreateGithubUser = async (profile: any) => {
   try {
     const user = await User.findOne({
-      attributes: ["id", "name", "email", "googleId", "createdAt", "updatedAt"],
+      attributes: ["id", "username", "email", "googleId", "createdAt", "updatedAt"],
       where: { email: profile._json.email }
     });
 
@@ -12,7 +12,7 @@ export const findOrCreateGithubUser = async (profile: any) => {
     }
     
     const newUser = await User.create({
-      name: profile._json.name,
+      username: profile._json.name,
       email: profile._json.email,
       googleId: profile.id
     });
@@ -26,7 +26,7 @@ export const findOrCreateGithubUser = async (profile: any) => {
 export const findOrCreateGoogleUser = async (profile: any) => {
   try {
     const user = await User.findOne({
-      attributes: ["id", "name", "email", "googleId", "createdAt", "updatedAt"],
+      attributes: ["id", "username", "email", "googleId", "createdAt", "updatedAt"],
       where: { email: profile._json.email }
     });
 
@@ -35,7 +35,7 @@ export const findOrCreateGoogleUser = async (profile: any) => {
     }
     
     const newUser = await User.create({
-      name: profile._json.name,
+      username: profile._json.name,
       email: profile._json.email,
       googleId: profile.id
     });
@@ -50,7 +50,7 @@ export const findOrCreateGoogleUser = async (profile: any) => {
 export const findAll = async (query: any) => {
   try {
     const users = await User.findAll({
-      attributes: ["id", "name", "email", "createdAt", "updatedAt"],
+      attributes: ["id", "username", "email", "createdAt", "updatedAt"],
       order: [["createdAt", "DESC"]],
       where: query,
     });
@@ -64,7 +64,7 @@ export const findAll = async (query: any) => {
 export const findOne = async (query: any) => {
   try {
     const user = await User.findOne({
-      attributes: ["id", "name", "email", "createdAt", "updatedAt"],
+      attributes: ["id", "username", "email", "createdAt", "updatedAt"],
       where: query,
     });
     return user;

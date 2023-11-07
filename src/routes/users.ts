@@ -43,7 +43,7 @@ userRouter.post('/signup', async (req, res) => {
     
     const userData = {
       id: user.id,
-      name: user.name,
+      username: user.username,
       email: user.email,
     };
 
