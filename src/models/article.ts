@@ -3,14 +3,15 @@ import { User } from "./user";
 import { Topic } from "./topic";
 
 class Article extends Model {
-  public articleId!: number;
+  public id!: number;
   public title!: string;
   public description!: string;
   public body!: string;
   public authorId!: number;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
-  public addTopics!: BelongsToManyAddAssociationsMixin<Topic, number>;
+  public addTopics!: BelongsToManyAddAssociationsMixin<Topic, null>;
+  public setTopics!: BelongsToManyAddAssociationsMixin<Topic, null>;
 }
 
 const ArticleAttributes = {

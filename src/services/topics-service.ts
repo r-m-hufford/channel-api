@@ -72,7 +72,7 @@ export const assignTopics = async (articleId: number, topicIds: number[]) => {
     });
 
     let topics = await Promise.all(topicPromises);
-    topics = topics.filter((topic): topic is Topic => topic !== null);
+    topics = topics.filter((topic) => topic !== null);
 
     const article = await Article.findOne({ where: { id: articleId } });
 
@@ -84,7 +84,7 @@ export const assignTopics = async (articleId: number, topicIds: number[]) => {
     }
 
     if(article && topics.length > 0) {
-      await article.addTopics([1]);
+      await article.addTopics(topics);
     }
 
 
