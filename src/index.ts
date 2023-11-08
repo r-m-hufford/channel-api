@@ -23,12 +23,14 @@ import { errorHandlerMiddleware } from './middleware/httpError';
 import { associateProfile, initProfile } from './models/profile';
 import { associateTopic, initTopic } from './models/topic';
 import { initArticleTopic } from './models/articles-topics';
+import { initComment } from './models/comment';
 initArticle(sequelize);
 initUser(sequelize);
 initRevokedToken(sequelize);
 initProfile(sequelize);
 initTopic(sequelize);
 initArticleTopic(sequelize);
+initComment(sequelize);
 
 associateUser();
 associateProfile();
