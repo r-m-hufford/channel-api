@@ -1,4 +1,6 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
+import { User } from './user';
+import { Article } from './article';
 
 class Comment extends Model {
   public id!: number;
@@ -56,5 +58,20 @@ export const initComment = (sequelize: Sequelize) => {
     tableName: 'comments',
   });
 }
+
+export const associateComment = () => {
+  Comment.belongsTo(User, {
+    targetKey: 'id',
+    foreignKey: 'userId',
+    as: 'user',
+  });
+
+  Comment.belongsTo(Article, {
+    targetKey: 'id',
+    foreignKey: 'articleId',
+    as: 'article',
+  });
+}
+
 
 export { Comment };

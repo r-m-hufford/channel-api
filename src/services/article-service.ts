@@ -1,12 +1,17 @@
 import { Article } from '../models/article';
 import { Topic } from '../models/topic';
+import { Comment } from '../models/comment';
+
 export const findAll = async (query: any) => {
   try {
     const articles = await Article.findAll({
       attributes: ["id", "author_id", "description", "title", "body", "createdAt", "updatedAt"],
       order: [["createdAt", "DESC"]],
       where: query,
-      include: [{ model: Topic, as: 'topics', attributes: ["id", "name", "createdAt", "updatedAt"], through: { attributes: [] } }],
+      include: [
+        { model: Topic, as: 'topics', attributes: ["id", "name", "createdAt", "updatedAt"], through: { attributes: [] } },
+        { model: Comment, as: 'comments', attributes: ["id", "body", "createdAt", "updatedAt"] },
+      ],
     });
     return articles;
   } catch (error) {
