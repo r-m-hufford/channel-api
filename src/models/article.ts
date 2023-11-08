@@ -11,7 +11,6 @@ class Article extends Model {
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
   public addTopics!: BelongsToManyAddAssociationsMixin<Topic, number>;
-
 }
 
 const ArticleAttributes = {
