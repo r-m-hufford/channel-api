@@ -34,6 +34,9 @@ export const initTopic = (sequelize: Sequelize): void => {
     sequelize,
     modelName: 'Topic',
     tableName: 'topics',
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
   });
 }
 

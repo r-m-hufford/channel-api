@@ -57,6 +57,9 @@ export const initArticle = (sequelize: Sequelize) => {
   Article.init(ArticleAttributes, {
     sequelize,
     tableName: 'articles',
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
   });
 };
 

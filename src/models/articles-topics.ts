@@ -1,20 +1,38 @@
-import { DataTypes, Model, Sequelize } from 'sequelize';
+import { Model, DataTypes, Sequelize } from 'sequelize';
+import { Article } from './article';
+import { Topic } from './topic';
 
-class Topic extends Model {
+class ArticleTopic extends Model {
   public id!: number;
-  public name!: string;
+  public articleId!: number;
+  public topicId!: number;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
 
-const TopicAttributes = {
+const ArticleTopicAttributes = {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-  name: {
-    type: DataTypes.STRING,
+  articleId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'articles',
+      key: 'id',
+    },
+    field: 'article_id',
+  },
+  topicId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'topics',
+      key: 'id',
+    },
+    field: 'topic_id',
   },
   createdAt: {
     type: DataTypes.DATE,
@@ -27,3 +45,16 @@ const TopicAttributes = {
     field: 'updated_at',
   },
 };
+
+export const initArticleTopic = (sequelize: Sequelize) => {
+  ArticleTopic.init(ArticleTopicAttributes, {
+    sequelize,
+    modelName: 'ArticleTopic',
+    tableName: 'articles_topics',
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
+  });
+};
+
+export { ArticleTopic };

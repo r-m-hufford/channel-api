@@ -22,11 +22,13 @@ import { authMiddleware } from './middleware/auth';
 import { errorHandlerMiddleware } from './middleware/httpError';
 import { associateProfile, initProfile } from './models/profile';
 import { associateTopic, initTopic } from './models/topic';
+import { initArticleTopic } from './models/articles-topics';
 initArticle(sequelize);
 initUser(sequelize);
 initRevokedToken(sequelize);
 initProfile(sequelize);
 initTopic(sequelize);
+initArticleTopic(sequelize);
 
 associateUser();
 associateProfile();
