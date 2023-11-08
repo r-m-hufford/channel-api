@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import { validatePassword } from '../utils/password';
 import { Article } from './article';
 import { Profile } from './profile';
+import { Comment } from './comment';
 
 class User extends Model {
   public id!: number;
@@ -90,6 +91,12 @@ export const associateUser = () => {
     sourceKey: 'id',
     foreignKey: 'authorId',
     as: 'articles',
+  });
+
+  User.hasMany(Comment, {
+    sourceKey: 'id',
+    foreignKey: 'userId',
+    as: 'comments',
   });
 
   User.hasOne(Profile, {

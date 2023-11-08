@@ -1,6 +1,7 @@
 import { BelongsToManyAddAssociationsMixin, DataTypes, Model, Sequelize } from "sequelize";
 import { User } from "./user";
 import { Topic } from "./topic";
+import { Comment } from "./comment";
 
 class Article extends Model {
   public id!: number;
@@ -73,6 +74,11 @@ export const associateArticle = () => {
     through: 'articles_topics',
     as: 'topics',
     foreignKey: 'article_id',
+  });
+
+  Article.hasMany(Comment, {
+    foreignKey: 'articleId',
+    as: 'comments',
   });
 };
 

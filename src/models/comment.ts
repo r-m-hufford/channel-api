@@ -56,3 +56,5 @@ export const initComment = (sequelize: Sequelize) => {
     tableName: 'comments',
   });
 }
+
+export { Comment };
