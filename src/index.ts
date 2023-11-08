@@ -1,6 +1,5 @@
 import 'dotenv/config';
 import express, {Request, Response } from 'express';
-import { Sequelize } from 'sequelize';
 import cors from 'cors';
 import { sequelize } from '../config/db';
 import cookieParser from 'cookie-parser';

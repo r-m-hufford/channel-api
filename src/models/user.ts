@@ -17,7 +17,7 @@ class User extends Model {
   async validPassword(password: string) {
     return await validatePassword(password, this);
   }
-    public getArticles!: HasManyGetAssociationsMixin<Article>;
+  public getArticles!: HasManyGetAssociationsMixin<Article>;
 }
 
 const UserAttributes = {
