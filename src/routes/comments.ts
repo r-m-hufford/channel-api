@@ -1,5 +1,5 @@
 import express from 'express';
-import { create, findAll, findOne, update } from '../services/comment-service';
+import { create, destroy, findAll, findOne, update } from '../services/comment-service';
 import { HttpError } from '../middleware/httpError';
 
 export const commentsRouter = express.Router();
