@@ -5,6 +5,7 @@ import { profileRouter } from './routes/profiles';
 import { articlesRouter } from './routes/articles';
 import { topicsRouter } from './routes/topics';
 import { commentsRouter } from './routes/comments';
+import { followsRouter } from './routes/follows';
 
 
 export function routes(app: any) {
@@ -15,4 +16,5 @@ export function routes(app: any) {
   app.use('/articles', articlesRouter);
   app.use('/topics', topicsRouter);
   app.use('/comments', commentsRouter);
+  app.use('/follows', followsRouter);
 }

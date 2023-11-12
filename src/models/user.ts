@@ -4,6 +4,7 @@ import { validatePassword } from '../utils/password';
 import { Article } from './article';
 import { Profile } from './profile';
 import { Comment } from './comment';
+import { Follow } from './follow';
 
 class User extends Model {
   public id!: number;
@@ -102,6 +103,20 @@ export const associateUser = () => {
   User.hasOne(Profile, {
     foreignKey: 'userId',
     as: 'profile',
+  });
+
+  User.belongsToMany(Follow, {
+    through: Follow,
+    as: 'followers',
+    foreignKey: 'followeeId',
+    otherKey: 'followerId',
+  });
+
+  User.belongsToMany(Follow, {
+    through: Follow,
+    as: 'followees',
+    foreignKey: 'followerId',
+    otherKey: 'followeeId',
   });
 }
 
