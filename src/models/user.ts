@@ -106,14 +106,14 @@ export const associateUser = () => {
   });
 
   User.belongsToMany(Follow, {
-    through: Follow,
+    through: 'follows',
     as: 'followers',
     foreignKey: 'followeeId',
     otherKey: 'followerId',
   });
 
   User.belongsToMany(Follow, {
-    through: Follow,
+    through: 'follows',
     as: 'followees',
     foreignKey: 'followerId',
     otherKey: 'followeeId',

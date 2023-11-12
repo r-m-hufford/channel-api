@@ -10,6 +10,7 @@ const FollowAttributes = {
   followerId: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    field: 'follower_id',
     references: {
       model: 'users',
       key: 'id',
@@ -18,6 +19,7 @@ const FollowAttributes = {
   followeeId: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    field: 'followee_id',
     references: {
       model: 'users',
       key: 'id',
@@ -28,6 +30,7 @@ const FollowAttributes = {
 export const initFollow = (sequelize: Sequelize) => {
   Follow.init(FollowAttributes, {
     sequelize,
+    modelName: 'Follow',
     tableName: 'follows',
     timestamps: true,
     createdAt: 'created_at',
