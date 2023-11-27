@@ -1,2 +1,6 @@
 node_modules
 .env
+
+# CDK temporary files
+cdk.out
+cdk.out/*

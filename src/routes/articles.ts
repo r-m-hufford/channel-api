@@ -1,10 +1,10 @@
-import express from 'express';
+import express, {Request, Response} from 'express';
 import { create, destroy, findAll, findOne, update } from '../services/article-service';
 import { HttpError } from '../middleware/httpError';
 
 export const articlesRouter = express.Router();
 
-articlesRouter.get('/', async (req, res) => {
+articlesRouter.get('/', async (req: Request, res: Response) => {
   try {
     const articles = await findAll(req.query);
     res.json(articles);
@@ -14,7 +14,7 @@ articlesRouter.get('/', async (req, res) => {
   }
 });
 
-articlesRouter.get('/:id', async (req, res) => {
+articlesRouter.get('/:id', async (req: Request, res: Response) => {
   try {
     const article = await findOne({ id: req.params.id });
     res.json(article);
@@ -24,7 +24,7 @@ articlesRouter.get('/:id', async (req, res) => {
   }
 });
 
-articlesRouter.post('/', async (req, res) => {
+articlesRouter.post('/', async (req: Request, res: Response) => {
   try {
     const article = await create(req.body);
     res.json(article);
@@ -34,7 +34,7 @@ articlesRouter.post('/', async (req, res) => {
   }
 });
 
-articlesRouter.put('/:id', async (req, res) => {
+articlesRouter.put('/:id', async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id);
     const updateFields = req.body;
@@ -52,7 +52,7 @@ articlesRouter.put('/:id', async (req, res) => {
   }
 });
 
-articlesRouter.delete('/:id', async (req, res) => {
+articlesRouter.delete('/:id', async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id);
     const article = await destroy(id);
