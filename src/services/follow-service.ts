@@ -20,7 +20,7 @@ export const unfollow = async (followerId: number, followeeId: number) => {
 };
 
 // these are probably not needed except for testing
-export const getFollowers = async (userId: number) => {
+export const getFollowers = async (userId: string) => {
   const followers = await Follow.findAll({
     where: {
       followeeId: userId

@@ -32,24 +32,41 @@ export class ChannelApiStack extends cdk.Stack {
 
     const usersResource = channelApi.root.addResource('users');
     usersResource.addMethod('GET', new apigateway.LambdaIntegration(channelLambda));
-    usersResource.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
-    usersResource.addMethod('PUT', new apigateway.LambdaIntegration(channelLambda));
-    usersResource.addMethod('DELETE', new apigateway.LambdaIntegration(channelLambda));
+    const userSignup = usersResource.addResource('signup');
+    userSignup.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
+    const userId = usersResource.addResource('{id}');
+    userId.addMethod('GET', new apigateway.LambdaIntegration(channelLambda));
+    userId.addMethod('PUT', new apigateway.LambdaIntegration(channelLambda));
+    userId.addMethod('DELETE', new apigateway.LambdaIntegration(channelLambda));
     
     const articlesResource = channelApi.root.addResource('articles');
     articlesResource.addMethod('GET', new apigateway.LambdaIntegration(channelLambda));
     articlesResource.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
-    articlesResource.addMethod('PUT', new apigateway.LambdaIntegration(channelLambda));
-    articlesResource.addMethod('DELETE', new apigateway.LambdaIntegration(channelLambda));
+    const articleId = articlesResource.addResource('{id}');
+    articleId.addMethod('PUT', new apigateway.LambdaIntegration(channelLambda));
+    articleId.addMethod('DELETE', new apigateway.LambdaIntegration(channelLambda));
     
     // const authResource = channelApi.root.addResource('auth');
 
-    // const commentsResource = channelApi.root.addResource('comments');
+    const commentsResource = channelApi.root.addResource('comments');
+    commentsResource.addMethod('GET', new apigateway.LambdaIntegration(channelLambda));
+    commentsResource.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
+    const commentId = commentsResource.addResource('{id}');
+    commentId.addMethod('PUT', new apigateway.LambdaIntegration(channelLambda));
+    commentId.addMethod('DELETE', new apigateway.LambdaIntegration(channelLambda));
     
-    // const followsResource = channelApi.root.addResource('follows');
+    const followersResource = channelApi.root.addResource('followers');
+    followersResource.addMethod('GET', new apigateway.LambdaIntegration(channelLambda));
     
-    // const passwordResource = channelApi.root.addResource('password');
+    const followResource = channelApi.root.addResource('follow');
+    followResource.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
     
+    const unfollowResource = channelApi.root.addResource('unfollow');
+    unfollowResource.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
+    
+    const passwordResource = channelApi.root.addResource('password');
+    const resetPassword = passwordResource.addResource('reset');
+    resetPassword.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
     // const profilesResource = channelApi.root.addResource('profiles');
     
     // const topicsResource = channelApi.root.addResource('topics');

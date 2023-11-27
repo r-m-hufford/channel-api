@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import express, {Request, Response } from 'express';
+import express from 'express';
 import cors from 'cors';
 import { sequelize } from '../config/db';
 import cookieParser from 'cookie-parser';
@@ -48,10 +48,6 @@ app.use(authMiddleware);
 
 routes(app);
 
-
-app.get('/api', (req: Request, res: Response) => {
-  res.json('contact');
-})
 app.use(errorHandlerMiddleware);
 app.listen(3000, ()=> {
   console.info('listening on port 3000');
