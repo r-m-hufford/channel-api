@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { confirmNewPassword, hashPassword, validatePassword } from "../utils/password";
+import { confirmNewPassword, hashPassword } from "../utils/password";
 import { User } from "../models/user";
 import { update } from '../services/user-service';
 import { HttpError } from '../middleware/httpError';

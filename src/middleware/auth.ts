@@ -3,7 +3,7 @@ import { User } from "../models/user";
 import { decodeToken } from "../utils/jwt";
 import { getAllTokens, checkForRevokedToken } from "../services/token-service";
 
-export const authMiddleware = async (req: any, res: any, next: any) => {
+export const authMiddleware = async (req: any, _res: any, next: any) => {
   try {
     const { url, method } = req;
     // console.log('this is the url: ', url);
@@ -41,7 +41,7 @@ export const authMiddleware = async (req: any, res: any, next: any) => {
   }
 }
 
-function routeDoesNotRequireToken(url: string, method: string): boolean {
+function routeDoesNotRequireToken(url: string, _method: string): boolean {
   return (url === '/users/signup' || url.startsWith('/auth'));
 }
 

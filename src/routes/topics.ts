@@ -1,10 +1,10 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import { assignTopics, create, destroy, findAll, findOne, update } from '../services/topics-service';
 import { HttpError } from '../middleware/httpError';
 
 export const topicsRouter = express.Router();
 
-topicsRouter.get('/', async (req, res) => {
+topicsRouter.get('/', async (req: Request, res: Response) => {
   try {
     const topics = await findAll(req.query);
     res.json(topics);
@@ -14,7 +14,7 @@ topicsRouter.get('/', async (req, res) => {
   }
 });
 
-topicsRouter.get('/:id', async (req, res) => {
+topicsRouter.get('/:id', async (req: Request , res: Response) => {
   try {
     const topic = await findOne({ id: req.params.id });
     res.json(topic);
@@ -24,7 +24,7 @@ topicsRouter.get('/:id', async (req, res) => {
   }
 });
 
-topicsRouter.post('/', async (req, res) => {
+topicsRouter.post('/', async (req: Request , res: Response) => {
   try {
     const topic = await create(req.body);
     res.json(topic);
@@ -34,7 +34,7 @@ topicsRouter.post('/', async (req, res) => {
   }
 });
 
-topicsRouter.post('/assign-topics', async (req, res) => {
+topicsRouter.post('/assign-topics', async (req: Request, res: Response) => {
   try {
     const { articleId, topicIds } = req.body;
     const topic = await assignTopics(articleId, topicIds);
@@ -45,7 +45,7 @@ topicsRouter.post('/assign-topics', async (req, res) => {
   }
 });
 
-topicsRouter.put('/:id', async (req, res) => {
+topicsRouter.put('/:id', async (req: Request , res: Response) => {
   try {
     const id = parseInt(req.params.id);
     const updateFields = req.body;
@@ -63,7 +63,7 @@ topicsRouter.put('/:id', async (req, res) => {
   }
 });
 
-topicsRouter.delete('/:id', async (req, res) => {
+topicsRouter.delete('/:id', async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id);
     const topic = await destroy(id);

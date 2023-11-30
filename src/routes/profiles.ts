@@ -1,10 +1,10 @@
-import express from 'express';
-import { Profile } from '../models/profile';
+import express, { Request, Response } from 'express';
+// import { Profile } from '../models/profile';
 import { create, destroy, findAll, findOne, update } from '../services/profile-service';
 
 export const profileRouter = express.Router();
 
-profileRouter.get('/', async (req, res) => {
+profileRouter.get('/', async (req: Request, res: Response) => {
   try {
     const profiles = await findAll(req.query);
     res.json(profiles);
@@ -14,7 +14,7 @@ profileRouter.get('/', async (req, res) => {
   }
 });
 
-profileRouter.get('/:id', async (req, res) => {
+profileRouter.get('/:id', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const profile = await findOne({ id: id });
@@ -25,7 +25,7 @@ profileRouter.get('/:id', async (req, res) => {
   }
 });
 
-profileRouter.post('/', async (req, res) => {
+profileRouter.post('/', async (req: Request, res: Response) => {
   try {
     const profile = await create(req.body);
     res.json(profile);
@@ -35,7 +35,7 @@ profileRouter.post('/', async (req, res) => {
   }
 });
 
-profileRouter.put('/:id', async (req, res) => {
+profileRouter.put('/:id', async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id);
     const profile = await update(id, req.body);
@@ -51,7 +51,7 @@ profileRouter.put('/:id', async (req, res) => {
   }
 });
 
-profileRouter.delete('/:id', async (req, res) => {
+profileRouter.delete('/:id', async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id);
     const profile = await destroy(id);

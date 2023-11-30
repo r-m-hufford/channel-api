@@ -1,12 +1,12 @@
 import express, {Request, Response } from 'express';
-import { confirmNewPassword, hashPassword } from '../utils/password';
+import { confirmNewPassword } from '../utils/password';
 import { HttpError } from '../middleware/httpError';
 import { generateToken } from '../utils/jwt';
 import { create, destroy, findAll, findOne, update } from '../services/user-service';
 
 export const userRouter = express.Router();
 
-userRouter.get('/', async (req, res) => {
+userRouter.get('/', async (req: Request, res: Response) => {
   try {
     const users = await findAll(req.query);
     res.json(users);
@@ -16,7 +16,7 @@ userRouter.get('/', async (req, res) => {
   }
 });
 
-userRouter.get('/:id', async (req, res) => {
+userRouter.get('/:id', async (req: Request, res: Response) => {
   try {
     const user = await findOne({ id: req.params.id });
     res.json(user);
@@ -26,7 +26,7 @@ userRouter.get('/:id', async (req, res) => {
   }
 });
 
-userRouter.post('/signup', async (req, res) => {
+userRouter.post('/signup', async (req: Request, res: Response) => {
   const { password, confirmPassword } = req.body;
   try {
     if (!confirmNewPassword(password, confirmPassword)) throw new HttpError(400, ['passwords do not match']);
@@ -54,7 +54,7 @@ userRouter.post('/signup', async (req, res) => {
   }
 });
 
-userRouter.put('/:id', async (req, res) => {
+userRouter.put('/:id', async (req: Request, res: Response) => {
   try {
     const { id } = req.params
     const updateFields = req.body;
@@ -64,14 +64,15 @@ userRouter.put('/:id', async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    res.json(user);
+
+    return res.status(200).json({ message: 'Update successful', user });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server Error' });
+    return res.status(500).json({ message: 'Server Error' });
   }
 });
 
-userRouter.delete('/:id', async (req, res) => {
+userRouter.delete('/:id', async (req: Request, res: Response) => {
   try {
     const user = await destroy(req.params.id);
     res.json(user);

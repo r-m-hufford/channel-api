@@ -1,6 +1,6 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
-import { Article } from './article';
-import { Topic } from './topic';
+// import { Article } from './article';
+// import { Topic } from './topic';
 
 class ArticleTopic extends Model {
   public id!: number;

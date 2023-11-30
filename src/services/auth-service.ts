@@ -1,7 +1,7 @@
 import { DecodedToken } from "../../types";
 import { RevokedToken } from "../models/revoked-token";
 import { decode } from "jsonwebtoken";
-export const logout = async (req: any, res: any) => {
+export const logout = async (req: any) => {
   try {
     const token = req.cookies['token'];
     const decoded = decode(token.accessToken) as DecodedToken;

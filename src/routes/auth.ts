@@ -4,10 +4,10 @@ import LocalStrategy from 'passport-local';
 import { User } from '../models/user';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { decodeToken, generateToken, verifyToken } from '../utils/jwt';
-import { findOrCreateGithubUser, findOrCreateGoogleUser } from '../services/user-service';
+import { findOrCreateGoogleUser } from '../services/user-service';
 import { logout } from '../services/auth-service';
 import { authLimiter } from '../limiters/limiters';
-import { Strategy as GitHubStrategy} from 'passport-github2';
+// import { Strategy as GitHubStrategy} from 'passport-github2';
 
 export const authRouter = express.Router();
 
@@ -70,7 +70,7 @@ passport.use(new GoogleStrategy({
   clientID,
   clientSecret,
   callbackURL
-}, async function(accessToken: string, refreshToken: string, profile: any, done: any) {
+}, async function(profile: any, done: any) {
   try {
     console.log('profile', profile);
     const user = await findOrCreateGoogleUser(profile);
@@ -128,7 +128,7 @@ authRouter.post('/login', [authLimiter, passport.authenticate('local', {session:
   res.json({user: req.user});
 });
 
-authRouter.get('/google', passport.authenticate('google', {scope: ['profile', 'email'], session: false}), (req, res) => {})
+authRouter.get('/google', passport.authenticate('google', {scope: ['profile', 'email'], session: false}), () => {})
 
 authRouter.get('/google/callback', passport.authenticate('google', { 
   failureRedirect: '/',
@@ -159,7 +159,7 @@ authRouter.get('/google/callback', passport.authenticate('google', {
 
 authRouter.post('/logout', (req, res) => {
   console.log(req.cookies['accessToken']);
-  logout(req, res);
+  logout(req);
   res.clearCookie('accessToken');
   res.json({message: 'Logged out'});
 });
