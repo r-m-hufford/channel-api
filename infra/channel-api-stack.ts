@@ -9,20 +9,32 @@ export class ChannelApiStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
+    const vpc = new ec2.Vpc(this, 'Vpc', { maxAzs: 2 })
+    
+    const lambdaSG = new ec2.SecurityGroup(this, 'LambdaSG', { vpc });
+    const rdsSG = new ec2.SecurityGroup(this, 'RdsSG', { vpc });
+
+    rdsSG.addIngressRule(lambdaSG, ec2.Port.tcp(5432), 'allow lambda to connect to rds')
+
     const channelLambda = new lambda.Function(this, 'ChannelApiLambda', {
       runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromAsset('src'),
       handler: 'index.handler',
+      vpc,
+      securityGroups: [lambdaSG],
     });
-
-    const vpc = new ec2.Vpc(this, 'Vpc', { maxAzs: 2 })
 
     new rds.DatabaseInstance(this, 'ChannelApiRDS', {
       engine: rds.DatabaseInstanceEngine.postgres({
         version: rds.PostgresEngineVersion.VER_12_5
       }),
       instanceType: ec2.InstanceType.of(ec2.InstanceClass.T2, ec2.InstanceSize.MICRO),
+      credentials: rds.Credentials.fromPassword(process.env.RDS_USERNAME as string, cdk.SecretValue.plainText(process.env.RDS_PASSWORD as string)),
       vpc,
+      vpcSubnets: {
+        subnetGroupName: 'Private',
+      },
+      securityGroups: [rdsSG],
       allocatedStorage: 20,
       storageType: rds.StorageType.GP2,
       deletionProtection: false,
@@ -46,8 +58,7 @@ export class ChannelApiStack extends cdk.Stack {
     articleId.addMethod('PUT', new apigateway.LambdaIntegration(channelLambda));
     articleId.addMethod('DELETE', new apigateway.LambdaIntegration(channelLambda));
     
-    // const authResource = channelApi.root.addResource('auth');
-
+    
     const commentsResource = channelApi.root.addResource('comments');
     commentsResource.addMethod('GET', new apigateway.LambdaIntegration(channelLambda));
     commentsResource.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
@@ -67,8 +78,35 @@ export class ChannelApiStack extends cdk.Stack {
     const passwordResource = channelApi.root.addResource('password');
     const resetPassword = passwordResource.addResource('reset');
     resetPassword.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
-    // const profilesResource = channelApi.root.addResource('profiles');
     
-    // const topicsResource = channelApi.root.addResource('topics');
+    const profilesResource = channelApi.root.addResource('profiles');
+    profilesResource.addMethod('GET', new apigateway.LambdaIntegration(channelLambda));
+    profilesResource.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
+    const profileId = profilesResource.addResource('{id}');
+    profileId.addMethod('GET', new apigateway.LambdaIntegration(channelLambda));
+    profileId.addMethod('PUT', new apigateway.LambdaIntegration(channelLambda));
+    profileId.addMethod('DELETE', new apigateway.LambdaIntegration(channelLambda));
+    
+    const topicsResource = channelApi.root.addResource('topics');
+    topicsResource.addMethod('GET', new apigateway.LambdaIntegration(channelLambda));
+    const assignTopics = topicsResource.addResource('assign-topics');
+    assignTopics.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
+    const topicId = topicsResource.addResource('{id}');
+    topicId.addMethod('GET', new apigateway.LambdaIntegration(channelLambda));
+    topicId.addMethod('PUT', new apigateway.LambdaIntegration(channelLambda));
+    topicId.addMethod('DELETE', new apigateway.LambdaIntegration(channelLambda));
+
+    
+    const authResource = channelApi.root.addResource('auth');
+    const login = authResource.addResource('login');
+    login.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
+    const google = authResource.addResource('google');
+    const callback = google.addResource('callback');
+    callback.addMethod('GET', new apigateway.LambdaIntegration(channelLambda));
+    const logout = authResource.addResource('logout');
+    logout.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
+    const refesh = authResource.addResource('refresh-token');
+    refesh.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
+
   }
 }

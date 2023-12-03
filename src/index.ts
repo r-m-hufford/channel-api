@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import { sequelize } from '../config/db';
 import cookieParser from 'cookie-parser';
+import serverless from 'serverless-http';
 
 //initialize database
 sequelize.authenticate()
@@ -53,3 +54,4 @@ app.listen(3000, ()=> {
   console.info('listening on port 3000');
 });
 
+export const handler = serverless(app);

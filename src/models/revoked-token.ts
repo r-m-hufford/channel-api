@@ -15,6 +15,7 @@ const RevokedTokenAttributes = {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
+    field: 'revoked_token_id',
   },
   userId: {
     type: DataTypes.INTEGER,
