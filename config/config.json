@@ -1,0 +1,20 @@
+{
+  "development": {
+    "username": "ryanmhufford",
+    "database": "channel",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "ryanmhufford",
+    "database": "channel",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "ryanmhufford",
+    "database": "chanel",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  }
+}
