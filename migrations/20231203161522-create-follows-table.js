@@ -3,28 +3,14 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-     await queryInterface.createTable('articles-topics', {
-      id: {
+    await queryInterface.createTable('follows', {
+      follower_id: {
         allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
         type: Sequelize.INTEGER
       },
-      article_id: {
-        type: Sequelize.INTEGER,
+      followee_id: {
         allowNull: false,
-        references: {
-          model: 'articles',
-          key: 'id',
-        },
-      },
-      topic_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'topics',
-          key: 'id',
-        },
+        type: Sequelize.INTEGER
       },
       created_at: {
         allowNull: false,
@@ -36,10 +22,11 @@ module.exports = {
         type: Sequelize.DATE,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       }
-     });
+    });
+
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('articles-topics');
+    await queryInterface.dropTable('follows');
   }
 };
