@@ -26,10 +26,10 @@ export class ChannelApiStack extends cdk.Stack {
 
     new rds.DatabaseInstance(this, 'ChannelApiRDS', {
       engine: rds.DatabaseInstanceEngine.postgres({
-        version: rds.PostgresEngineVersion.VER_12_5
+        version: rds.PostgresEngineVersion.VER_12
       }),
       instanceType: ec2.InstanceType.of(ec2.InstanceClass.T2, ec2.InstanceSize.MICRO),
-      credentials: rds.Credentials.fromPassword(process.env.RDS_USERNAME as string, cdk.SecretValue.plainText(process.env.RDS_PASSWORD as string)),
+      credentials: rds.Credentials.fromGeneratedSecret('channelapi'),
       vpc,
       vpcSubnets: {
         subnetGroupName: 'Private',
@@ -59,54 +59,53 @@ export class ChannelApiStack extends cdk.Stack {
     articleId.addMethod('DELETE', new apigateway.LambdaIntegration(channelLambda));
     
     
-    const commentsResource = channelApi.root.addResource('comments');
-    commentsResource.addMethod('GET', new apigateway.LambdaIntegration(channelLambda));
-    commentsResource.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
-    const commentId = commentsResource.addResource('{id}');
-    commentId.addMethod('PUT', new apigateway.LambdaIntegration(channelLambda));
-    commentId.addMethod('DELETE', new apigateway.LambdaIntegration(channelLambda));
+    // const commentsResource = channelApi.root.addResource('comments');
+    // commentsResource.addMethod('GET', new apigateway.LambdaIntegration(channelLambda));
+    // commentsResource.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
+    // const commentId = commentsResource.addResource('{id}');
+    // commentId.addMethod('PUT', new apigateway.LambdaIntegration(channelLambda));
+    // commentId.addMethod('DELETE', new apigateway.LambdaIntegration(channelLambda));
     
-    const followersResource = channelApi.root.addResource('followers');
-    followersResource.addMethod('GET', new apigateway.LambdaIntegration(channelLambda));
+    // const followersResource = channelApi.root.addResource('followers');
+    // followersResource.addMethod('GET', new apigateway.LambdaIntegration(channelLambda));
     
-    const followResource = channelApi.root.addResource('follow');
-    followResource.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
+    // const followResource = channelApi.root.addResource('follow');
+    // followResource.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
     
-    const unfollowResource = channelApi.root.addResource('unfollow');
-    unfollowResource.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
+    // const unfollowResource = channelApi.root.addResource('unfollow');
+    // unfollowResource.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
     
-    const passwordResource = channelApi.root.addResource('password');
-    const resetPassword = passwordResource.addResource('reset');
-    resetPassword.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
+    // const passwordResource = channelApi.root.addResource('password');
+    // const resetPassword = passwordResource.addResource('reset');
+    // resetPassword.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
     
-    const profilesResource = channelApi.root.addResource('profiles');
-    profilesResource.addMethod('GET', new apigateway.LambdaIntegration(channelLambda));
-    profilesResource.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
-    const profileId = profilesResource.addResource('{id}');
-    profileId.addMethod('GET', new apigateway.LambdaIntegration(channelLambda));
-    profileId.addMethod('PUT', new apigateway.LambdaIntegration(channelLambda));
-    profileId.addMethod('DELETE', new apigateway.LambdaIntegration(channelLambda));
+    // const profilesResource = channelApi.root.addResource('profiles');
+    // profilesResource.addMethod('GET', new apigateway.LambdaIntegration(channelLambda));
+    // profilesResource.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
+    // const profileId = profilesResource.addResource('{id}');
+    // profileId.addMethod('GET', new apigateway.LambdaIntegration(channelLambda));
+    // profileId.addMethod('PUT', new apigateway.LambdaIntegration(channelLambda));
+    // profileId.addMethod('DELETE', new apigateway.LambdaIntegration(channelLambda));
     
-    const topicsResource = channelApi.root.addResource('topics');
-    topicsResource.addMethod('GET', new apigateway.LambdaIntegration(channelLambda));
-    const assignTopics = topicsResource.addResource('assign-topics');
-    assignTopics.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
-    const topicId = topicsResource.addResource('{id}');
-    topicId.addMethod('GET', new apigateway.LambdaIntegration(channelLambda));
-    topicId.addMethod('PUT', new apigateway.LambdaIntegration(channelLambda));
-    topicId.addMethod('DELETE', new apigateway.LambdaIntegration(channelLambda));
+    // const topicsResource = channelApi.root.addResource('topics');
+    // topicsResource.addMethod('GET', new apigateway.LambdaIntegration(channelLambda));
+    // const assignTopics = topicsResource.addResource('assign-topics');
+    // assignTopics.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
+    // const topicId = topicsResource.addResource('{id}');
+    // topicId.addMethod('GET', new apigateway.LambdaIntegration(channelLambda));
+    // topicId.addMethod('PUT', new apigateway.LambdaIntegration(channelLambda));
+    // topicId.addMethod('DELETE', new apigateway.LambdaIntegration(channelLambda));
 
     
-    const authResource = channelApi.root.addResource('auth');
-    const login = authResource.addResource('login');
-    login.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
-    const google = authResource.addResource('google');
-    const callback = google.addResource('callback');
-    callback.addMethod('GET', new apigateway.LambdaIntegration(channelLambda));
-    const logout = authResource.addResource('logout');
-    logout.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
-    const refesh = authResource.addResource('refresh-token');
-    refesh.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
-
+    // const authResource = channelApi.root.addResource('auth');
+    // const login = authResource.addResource('login');
+    // login.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
+    // const google = authResource.addResource('google');
+    // const callback = google.addResource('callback');
+    // callback.addMethod('GET', new apigateway.LambdaIntegration(channelLambda));
+    // const logout = authResource.addResource('logout');
+    // logout.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
+    // const refesh = authResource.addResource('refresh-token');
+    // refesh.addMethod('POST', new apigateway.LambdaIntegration(channelLambda));
   }
 }
