@@ -3,3 +3,5 @@ node_modules
 
 # CDK temporary files
 cdk.out/*
+
+ChannelKeyPair.pem
