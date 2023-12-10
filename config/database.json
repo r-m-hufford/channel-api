@@ -1,0 +1,5 @@
+{
+  "development": {
+    "url": "postgresql://ryanmhufford@localhost:6543/channel"
+  }
+}
